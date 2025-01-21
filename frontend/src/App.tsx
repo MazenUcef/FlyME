@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
 import Layout from "./layouts/Layout"
 import Register from "./pages/Register"
+import SignIn from "./pages/SignIn"
 
 
 export default function App() {
@@ -28,6 +29,14 @@ export default function App() {
           element={
             <Layout showHero={false}>
               <Register />
+            </Layout>
+          }
+        />
+        <Route
+          path="/sign-in"
+          element={
+            <Layout showHero={false}>
+              <SignIn />
             </Layout>
           }
         />

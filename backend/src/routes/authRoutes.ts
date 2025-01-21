@@ -8,5 +8,5 @@ const router = express.Router();
 
 router.post('/login', validateUserLogin, handleValidationErrors, userController.SignIn)
 router.get('/validate-token', verifyToken, userController.validateToken)
-
+router.post('/logout' , userController.SignOut)
 export default router;

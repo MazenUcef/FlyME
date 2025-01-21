@@ -98,7 +98,25 @@ const validateToken = async (req: Request, res: Response): Promise<void> => {
     res.status(200).send({ userId: req.userId })
 }
 
+
+const SignOut = async (req: Request, res: Response): Promise<void> => {
+    try {
+        res.cookie('auth_token', "", {
+            expires: new Date(0),
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production', 
+            sameSite: 'strict'
+        });
+        res.status(200).json({ message: "Logged out successfully" }); 
+    } catch (error) {
+        console.error("Error during sign out:", error);
+        res.status(500).json({ message: "Logout failed" });
+    }
+}
+
+
 export default {
+    SignOut,
     SignUp,
     SignIn,
     validateToken
