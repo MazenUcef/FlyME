@@ -39,7 +39,12 @@ const SignUp = async (req: Request, res: Response, next: NextFunction): Promise<
             maxAge: 86400000,
             sameSite: "strict",
         })
-        res.sendStatus(200)
+        const userObject = user.toObject()
+        const { password: userPassword, ...data } = userObject
+        res.status(200).send({
+            message: "User created successfully",
+            data,
+        })
     } catch (error) {
         console.error("Error during sign up:", error);
         next(error)
@@ -74,8 +79,14 @@ const SignIn = async (req: Request, res: Response, next: NextFunction): Promise<
             maxAge: 86400000,
             sameSite: "strict",
         });
-
-        res.status(200).json({ userId: user._id });
+        const userObject = user.toObject();
+        const { password: userPassword, ...data } = userObject;
+        res.status(200).send({
+            message: "User logged in successfully",
+            status: "success",
+            data,
+            userId: user._id
+        });
     } catch (error) {
         console.error(error);
         next(error);
@@ -83,7 +94,12 @@ const SignIn = async (req: Request, res: Response, next: NextFunction): Promise<
 };
 
 
+const validateToken = async (req: Request, res: Response): Promise<void> => {
+    res.status(200).send({ userId: req.userId })
+}
+
 export default {
     SignUp,
-    SignIn
+    SignIn,
+    validateToken
 };

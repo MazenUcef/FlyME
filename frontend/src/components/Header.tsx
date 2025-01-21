@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom"
 import Logo100Px from "../assets/icons/Logo100Px"
+import { useValidateToken } from "../api/AuthApi";
 
 const Header = () => {
+    const { isLoggedIn } = useValidateToken();
     return (
         <div className="bg-gradient-to-l from-third to-fourth py-6">
             <div className="container mx-auto flex justify-between items-center">
@@ -12,7 +14,15 @@ const Header = () => {
                     </Link>
                 </span>
                 <span className="flex space-x-2">
-                    <Link className="flex items-center px-6 py-2 bg-white text-third hover:text-secondary font-bold hover:bg-fourth rounded-lg" to={'/sign-in'}>SignIn</Link>
+                    {isLoggedIn ?
+                        <>
+                            <Link to={"/my-bookings"}>My Bookings</Link>
+                            <Link to={"/my-hotels"}>My Hotels</Link>
+                            <button>Sign out</button>
+                        </>
+                        :
+                        <Link className="flex items-center px-6 py-2 bg-white text-third hover:text-secondary font-bold hover:bg-fourth rounded-lg" to={'/sign-in'}>SignIn</Link>
+                    }
                 </span>
             </div>
         </div>

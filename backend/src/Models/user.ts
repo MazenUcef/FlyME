@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcryptjs"
+// import bcrypt from "bcryptjs"
 
 export type UserType = {
     _id: string;
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
     lastName: {
         type: String,
         required: true
-    }
+    } 
 })
 
 
