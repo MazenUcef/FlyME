@@ -1,5 +1,6 @@
 import { Controller, useForm } from "react-hook-form"
 import { UseRegister } from "../api/AuthApi"
+import { Link } from "react-router-dom"
 
 
 export type RegisterFormData = {
@@ -142,11 +143,10 @@ const Register = () => {
                     </label>
                 )}
             />
-            <span className="">
-                <button type="submit" className={`bg-fourth ${isLoading ? "bg-third" : "bg-fourth"} text-secondary p-2 font-bold hover:text-third text-sm rounded-full`}>
-                    {isLoading ? "Creating..." : "Create Account"}
-                </button>
-            </span>
+            <span className="text-secondary text-xs font-semibold">Already registered? <Link className="underline" to={'/sign-in'}>Sign in here</Link></span>
+            <button type="submit" className={`bg-fourth ${isLoading ? "bg-third" : "bg-fourth"} text-secondary p-2 font-bold hover:text-third text-sm rounded-md`}>
+                {isLoading ? "Creating..." : "Create Account"}
+            </button>
         </form>
     )
 }

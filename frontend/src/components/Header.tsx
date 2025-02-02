@@ -25,8 +25,8 @@ const Header = () => {
                 <span className="flex space-x-2 items-center">
                     {isLoggedIn ? (
                         <>
-                            <Link to={"/my-bookings"}>My Bookings</Link>
-                            <Link to={"/my-hotels"}>My Hotels</Link>
+                            <Link className="flex items-center text-white px-3 font-bold hover:text-secondary" to={"/my-bookings"}>My Bookings</Link>
+                            <Link className="flex items-center text-white px-3 font-bold hover:text-secondary"to={"/my-hotels"}>My Hotels</Link>
                             <button
                                 onClick={() => setShowLogoutModal(true)}
                                 className="flex items-center px-6 py-2 bg-white text-third hover:text-secondary font-bold hover:bg-fourth rounded-lg"
@@ -50,7 +50,7 @@ const Header = () => {
                         <div className="flex justify-center space-x-4">
                             <button 
                                 onClick={handleLogout} 
-                                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-700"
+                                className="bg-fourth text-white px-4 py-2 rounded-lg hover:bg-secondary"
                                 disabled={isLoggingOut}
                             >
                                 {isLoggingOut ? "Logging out..." : "Yes, Logout"}
