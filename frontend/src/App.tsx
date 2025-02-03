@@ -4,6 +4,8 @@ import Register from "./pages/Register"
 import SignIn from "./pages/SignIn"
 import AddHotel from "./pages/AddHotel"
 import { useValidateToken } from "./api/AuthApi"
+import MyHotels from "./pages/MyHotels"
+import EditHotel from "./pages/EditHotel"
 
 
 export default function App() {
@@ -53,6 +55,18 @@ export default function App() {
                   <AddHotel />
                 </Layout>
               }
+            />
+            <Route
+              path="/my-hotels"
+              element={
+                <Layout>
+                  <MyHotels />
+                </Layout>
+              }
+            />
+            <Route
+              path="/edit-hotel/:id"
+              element={<EditHotel />}
             />
           </>
         }
