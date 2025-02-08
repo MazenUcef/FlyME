@@ -78,7 +78,7 @@ const hotelSchema = new mongoose.Schema({
     lastUpdated: {
         type: Date,
         required: true,
-    }
+    },
 })
 
 const Hotel = mongoose.model<HotelType>("Hotel", hotelSchema)

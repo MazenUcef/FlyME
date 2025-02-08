@@ -1,8 +1,9 @@
 import { Controller, useForm } from "react-hook-form";
 import { hotelFacilities, hotelTypes } from "../constants/Hotel-options-config";
-import { UseCreateHotel } from "../api/HotelApi";
+import { useEffect } from "react";
 
 export type HotelFormData = {
+    _id: string;
     name: string;
     city: string;
     country: string;
@@ -14,11 +15,16 @@ export type HotelFormData = {
     pricePerNight: number;
     startRating: number;
     imageFiles: FileList;
+    imagesUrls: string[]
+}
+type Props = {
+    hotel?: HotelFormData;
+    onSave: (HotelFormData: FormData) => void;
+    isLoading: boolean;
 }
 
-const ManageHotelForm = () => {
-    const { CreateHotel, isLoading } = UseCreateHotel()
-    const { control, handleSubmit, reset, watch, formState: { errors } } = useForm<HotelFormData>({
+const ManageHotelForm = ({ hotel, isLoading, onSave }: Props) => {
+    const { control, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<HotelFormData>({
         defaultValues: {
             name: "",
             city: "",
@@ -31,32 +37,61 @@ const ManageHotelForm = () => {
             pricePerNight: 0,
             startRating: 0,
             imageFiles: undefined,
+            imagesUrls: [],
         }
     })
+
+
+    const existingImagesUrls = watch("imagesUrls");
+    console.log(existingImagesUrls);
+
+    const handleDelete = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>, imageUrl: string) => {
+        e.preventDefault()
+        setValue('imagesUrls', existingImagesUrls.filter((url) => url !== imageUrl))
+    }
+
+    useEffect(() => {
+        reset(hotel)
+    }, [hotel, reset])
     const typeWatch = watch("type")
 
     const onSubmit = async (fromDataJson: HotelFormData) => {
         console.log(fromDataJson);
         const formData = new FormData();
-
-        formData.append("name", fromDataJson.name)
-        formData.append("city", fromDataJson.city)
-        formData.append("country", fromDataJson.country)
-        formData.append("description", fromDataJson.description)
-        formData.append("type", fromDataJson.type)
-        formData.append("adultCount", fromDataJson.adultCount.toString())
-        formData.append("childCount", fromDataJson.childCount.toString())
-        formData.append("pricePerNight", fromDataJson.pricePerNight.toString())
-        formData.append("startRating", fromDataJson.startRating.toString())
+    
+        if (hotel) {
+            formData.append("hotelId", hotel._id);
+        }
+        formData.append("name", fromDataJson.name);
+        formData.append("city", fromDataJson.city);
+        formData.append("country", fromDataJson.country);
+        formData.append("description", fromDataJson.description);
+        formData.append("type", fromDataJson.type);
+        formData.append("adultCount", fromDataJson.adultCount.toString());
+        formData.append("childCount", fromDataJson.childCount.toString());
+        formData.append("pricePerNight", fromDataJson.pricePerNight.toString());
+        formData.append("startRating", fromDataJson.startRating.toString());
+    
         fromDataJson.facilities.forEach((facility, index) => {
-            formData.append(`facilities[${index}]`, facility)
-        })
-        Array.from(fromDataJson.imageFiles).forEach((imageFile) => {
-            formData.append(`imageFiles`, imageFile)
-        })
-        CreateHotel(formData)
-        reset()
-    }
+            formData.append(`facilities[${index}]`, facility);
+        });
+    
+        if (fromDataJson?.imagesUrls) {
+            fromDataJson.imagesUrls.forEach((url, index) => {
+                formData.append(`imagesUrls[${index}]`, url);
+            });
+        }
+    
+        // ✅ FIX: Check if `imageFiles` exists before iterating
+        if (fromDataJson.imageFiles && fromDataJson.imageFiles.length > 0) {
+            Array.from(fromDataJson.imageFiles).forEach((imageFile) => {
+                formData.append("imageFiles", imageFile);
+            });
+        }
+    
+        onSave(formData);
+    };
+    
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <h1 className="text-3xl font-bold mb-3">Add Hotel</h1>
@@ -325,15 +360,32 @@ const ManageHotelForm = () => {
             <div>
                 <h2 className="text-2xl font-bold mb-3">Images</h2>
                 <div className="border rounded p-4 flex flex-col gap-4">
+                    {existingImagesUrls && (
+                        <div className="grid grid-cols-6 gap-4">
+                            {existingImagesUrls.map((url) => (
+                                <div className="relative group">
+                                    <img
+                                        className="min-h-full object-cover"
+                                        src={url}
+                                        alt="hotel image"
+                                    />
+                                    <button onClick={(e) => handleDelete(e, url)} className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 text-white">
+                                        Delete
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                     <Controller
                         name="imageFiles"
                         control={control}
                         rules={{
                             validate: (imageFiles) => {
-                                if (!imageFiles || imageFiles.length === 0) {
+                                const totalLength = imageFiles?.length + (existingImagesUrls?.length || 0)
+                                if (totalLength === 0) {
                                     return "At least one image must be uploaded";
                                 }
-                                if (imageFiles.length > 6) {
+                                if (totalLength > 6) {
                                     return "Maximum 6 images can be uploaded";
                                 }
                                 return true;
@@ -365,7 +417,7 @@ const ManageHotelForm = () => {
             <span className="flex justify-end">
                 <button disabled={isLoading} type="submit" className={`${isLoading && "cursor-not-allowed opacity-45"} text-white py-2 px-10 font-bold rounded-lg hover:opacity-45 bg-gradient-to-l from-third to-fourth`}>
                     {
-                        isLoading ? "Creating..." : "Create Hotel"
+                        isLoading ? "Saving..." : "Save Hotel"
                     }
                 </button>
             </span>

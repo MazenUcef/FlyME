@@ -60,7 +60,7 @@ export const UseGetHotels = () => {
     }
 }
 export const UseFetchHotelById = (hotelId: string) => {
-    const GetHotelByID = async (hotelId: string) => {
+    const GetHotelByID = async () => {
         const res = await fetch(`${API_BASE_URL}/api/my-hotels/${hotelId}`, {
             method: 'GET',
             credentials: 'include',
@@ -73,10 +73,42 @@ export const UseFetchHotelById = (hotelId: string) => {
         return data.data
     }
 
-    const hotelsQuery = useQuery(['HotelById', hotelId], () => GetHotelByID(hotelId))
+    const hotelsQuery = useQuery(['HotelById', hotelId], () => GetHotelByID())
 
 
     return {
         ...hotelsQuery
+    }
+}
+
+
+
+export const UseUpdateHotel = () => {
+    const createAccount = async (formData: FormData) => {
+        const res = await fetch(`${API_BASE_URL}/api/my-hotels/${formData.get("hotelId")}`, {
+            method: 'PUT',
+            credentials: 'include',
+            body: formData
+        })
+
+        if (!res.ok) {
+            throw new Error("Faild to Update this hotel")
+        }
+
+        return res.json()
+    }
+
+    const { mutate: UpdateHotel, isLoading: isUpdating } = useMutation({
+        mutationFn: createAccount,
+        onSuccess: async () => {
+            toast.success("Hotel Created successfully!")
+        },
+        onError: (error: Error) => toast.error(error.message)
+    })
+
+
+    return {
+        UpdateHotel,
+        isUpdating,
     }
 }

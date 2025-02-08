@@ -66,7 +66,11 @@ export default function App() {
             />
             <Route
               path="/edit-hotel/:id"
-              element={<EditHotel />}
+              element={
+                <Layout>
+                  <EditHotel />
+                </Layout>
+              }
             />
           </>
         }

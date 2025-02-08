@@ -13,6 +13,8 @@ const upload = multer({
 });
 
 router.post('/', verifyToken, hotelValidators, upload.array("imageFiles", 6), hotelController.createHotel)
-
+router.get('/', verifyToken, hotelController.getHotels)
+router.get('/:id', verifyToken, hotelController.getHotelById)
+router.put('/:hotelId', verifyToken, upload.array("imageFiles"), hotelController.updateHotelById)
 
 export default router
